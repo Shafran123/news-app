@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:news_app/innerScreen.dart';
 import 'package:provider/provider.dart';
 
 import 'dark_theme_provider.dart';
@@ -222,51 +223,58 @@ class _HomeScreenState extends State<HomeScreen> {
                       for (var tag in fiterTags)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20.0),
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(25.0),
-                                child: Image.network(
-                                  'http://www.newswire.lk/wp-content/uploads/2021/01/Screenshot_20210101-094411_Chrome.jpg',
-                                  fit: BoxFit.cover,
-                                  height: 100,
-                                  width: 100,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: 
+                                    (context) => InnerScreen()
+                                  ));
+                            },
+                                                      child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  child: Image.network(
+                                    'http://www.newswire.lk/wp-content/uploads/2021/01/Screenshot_20210101-094411_Chrome.jpg',
+                                    fit: BoxFit.cover,
+                                    height: 100,
+                                    width: 100,
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 15.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Health',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.orange[300]),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Container(
-                                      width:
-                                          MediaQuery.of(context).size.width / 2,
-                                      child: Text(
-                                        'Covid Death Troll Rises uptp 208,Servral Areas Remains Lockdown',
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 15.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Health',
                                         style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).primaryTextTheme.bodyText1.color),
+                                            color: Colors.orange[300]),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text('by Siripala on Jan 1 , 2020' ,style: TextStyle(color: Theme.of(context).primaryTextTheme.bodyText1.color),)
-                                  ],
-                                ),
-                              )
-                            ],
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width / 2,
+                                        child: Text(
+                                          'Covid Death Troll Rises uptp 208,Servral Areas Remains Lockdown',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context).primaryTextTheme.bodyText1.color),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text('by Siripala on Jan 1 , 2020' ,style: TextStyle(color: Theme.of(context).primaryTextTheme.bodyText1.color),)
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         )
                     ],
