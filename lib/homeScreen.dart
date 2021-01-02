@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:news_app/innerScreen.dart';
+import 'package:news_app/models/news_list.dart';
+import 'package:news_app/services/api_manager.dart';
 import 'package:provider/provider.dart';
 
 import 'dark_theme_provider.dart';
@@ -12,6 +14,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Future<NewsModel> _newsModel;
+
+  @override
+  void initState() {
+    _newsModel = APIManager().getNews();
+
+    super.initState();
+
+    setState(() {});
+    //print(_newsModel);
+  }
+
   int selectedIndex = 0;
 
   List<Map<String, Object>> fiterTags = [
@@ -113,8 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                             fontSize: 24.0,
                             fontWeight: FontWeight.bold,
-                          color: Colors.white
-                          ),
+                            color: Colors.white),
                       ),
                     ],
                   ),
@@ -172,11 +185,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ? TextStyle(
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).primaryTextTheme.bodyText1.color)
+                                      color: Theme.of(context)
+                                          .primaryTextTheme
+                                          .bodyText1
+                                          .color)
                                   : TextStyle(
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).primaryTextTheme.bodyText1.color),
+                                      color: Theme.of(context)
+                                          .primaryTextTheme
+                                          .bodyText1
+                                          .color),
                             ),
                           ),
                         )),
@@ -213,76 +232,122 @@ class _HomeScreenState extends State<HomeScreen> {
           child: SingleChildScrollView(
             //shrinkWrap: true,
             //physics: AlwaysScrollableScrollPhysics(),
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
-              child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    children: [
-                      for (var tag in fiterTags)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: 
-                                    (context) => InnerScreen()
-                                  ));
-                            },
-                                                      child: Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(25.0),
-                                  child: Image.network(
-                                    'http://www.newswire.lk/wp-content/uploads/2021/01/Screenshot_20210101-094411_Chrome.jpg',
-                                    fit: BoxFit.cover,
-                                    height: 100,
-                                    width: 100,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 15.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Health',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.orange[300]),
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width / 2,
-                                        child: Text(
-                                          'Covid Death Troll Rises uptp 208,Servral Areas Remains Lockdown',
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).primaryTextTheme.bodyText1.color),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Text('by Siripala on Jan 1 , 2020' ,style: TextStyle(color: Theme.of(context).primaryTextTheme.bodyText1.color),)
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                    ],
-                  )),
+            child: FutureBuilder(
+              future: _newsModel,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20.0, right: 20.0, bottom: 20.0),
+                    child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          children: [
+                            for (var news in snapshot.data.articles)
+                              NewsListWidget(
+                                  data: news,
+                                  title: news.title,
+                                  imageUrl: news.urlToImage)
+                          ],
+                        )),
+                  );
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              },
             ),
           ),
         )
       ],
+    );
+  }
+}
+
+class NewsListWidget extends StatelessWidget {
+  const NewsListWidget(
+      {Key key,
+      @required this.title,
+      @required this.imageUrl,
+      @required this.data})
+      : super(key: key);
+
+  final String title;
+  final String imageUrl;
+  final Article data;
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(
+                builder: (context) => InnerScreen(),
+                
+                  settings: RouteSettings(
+              arguments: data,
+            ),
+                ));
+        },
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(25.0),
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                height: 100,
+                width: 100,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Health',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange[300]),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 2,
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context)
+                              .primaryTextTheme
+                              .bodyText1
+                              .color),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 2,
+                    child: Text(
+                      'by ${data.author} \nJan ${data.publishedAt.month} ${data.publishedAt.year}',
+                      style: TextStyle(
+                          color: Theme.of(context)
+                              .primaryTextTheme
+                              .bodyText1
+                              .color),
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

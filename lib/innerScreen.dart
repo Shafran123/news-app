@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/models/news_list.dart';
 import 'package:news_app/news_content.dart';
 
 class InnerScreen extends StatefulWidget {
-  InnerScreen({Key key}) : super(key: key);
+  InnerScreen({Key key, Article data}) : super(key: key);
 
   @override
   _InnerScreenState createState() => _InnerScreenState();
 }
 
 class _InnerScreenState extends State<InnerScreen> {
+
   @override
   Widget build(BuildContext context) {
+      final Article data = ModalRoute.of(context).settings.arguments;
+
+      print(data.author);
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -40,7 +46,7 @@ class _InnerScreenState extends State<InnerScreen> {
                 fit: StackFit.expand,
                 children: [
                   Image.network(
-                      'http://www.newswire.lk/wp-content/uploads/2021/01/Screenshot_20210101-094411_Chrome.jpg',
+                      data.urlToImage,
                     fit: BoxFit.cover,
                   ),
                   const DecoratedBox(
@@ -85,7 +91,7 @@ class _InnerScreenState extends State<InnerScreen> {
           //     },
           //   ),
           // ),
-          SliverList(delegate: SliverChildListDelegate([NewsContentWidget()]))
+          SliverList(delegate: SliverChildListDelegate([NewsContentWidget(data : data)]))
         ],
         //body: Text('hello'),
       ),
