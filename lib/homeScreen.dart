@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:news_app/bloc/news_bloC.dart';
 import 'package:news_app/innerScreen.dart';
 import 'package:news_app/models/news_list.dart';
 import 'package:news_app/services/api_manager.dart';
@@ -16,10 +17,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Future<NewsModel> _newsModel;
 
+  final newsBloc = NewsBloc();
+
   @override
   void initState() {
-    _newsModel = APIManager().getNews();
-
+    // _newsModel = APIManager().getNews();
+    newsBloc.newseventSink.add(NewsAction.Fetch);
     super.initState();
 
     setState(() {});
@@ -232,8 +235,8 @@ class _HomeScreenState extends State<HomeScreen> {
           child: SingleChildScrollView(
             //shrinkWrap: true,
             //physics: AlwaysScrollableScrollPhysics(),
-            child: FutureBuilder(
-              future: _newsModel,
+            child: StreamBuilder<List<Article>>(
+              stream: newsBloc.newsStream,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return Padding(
@@ -243,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         width: MediaQuery.of(context).size.width,
                         child: Column(
                           children: [
-                            for (var news in snapshot.data.articles)
+                            for (var news in snapshot.data)
                               NewsListWidget(
                                   data: news,
                                   title: news.title,
