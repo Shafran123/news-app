@@ -51,4 +51,9 @@ class NewsBloc {
       return newsModel;
     }
   }
+
+  void dispose(){
+    _statestreamController.close();
+    _eventstreamController.close();
+  }
 }

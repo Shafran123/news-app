@@ -28,6 +28,12 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
     //print(_newsModel);
   }
+  
+  @override
+  void dispose(){
+      newsBloc.dispose();
+      super.dispose();
+  }
 
   int selectedIndex = 0;
 
